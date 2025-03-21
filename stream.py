@@ -7,7 +7,7 @@ import plotly.express as px
 # Load data
 @st.cache_data
 def load_data():
-    return pd.read_excel("ml_foundations_augmented_from_sample_846.xlsx")
+    return pd.read_excel("ML_Foundations_Gradebook_median.xlsx")
 
 df = load_data()
 st.title("ML Foundations Dashboard")
@@ -65,10 +65,11 @@ if 'id' in df.columns:
     student_data = df[df['id'] == selected_id].select_dtypes(include=['float64', 'int64'])
 
     if not student_data.empty:
+        student_data = student_data.T.reset_index()
+        student_data.columns = ['Metric', 'Value']
+
         fig_student, ax_student = plt.subplots(figsize=(10, 4))
-        student_data = student_data.T
-        student_data.columns = ['Value']
-        sns.barplot(x=student_data.index, y='Value', data=student_data.reset_index(), ax=ax_student, palette="viridis")
+        sns.barplot(x='Metric', y='Value', data=student_data, ax=ax_student, palette="viridis")
         ax_student.set_title(f"Grades and Attendance for Student {selected_id}")
         ax_student.set_xticklabels(ax_student.get_xticklabels(), rotation=45, ha="right")
         st.pyplot(fig_student)
